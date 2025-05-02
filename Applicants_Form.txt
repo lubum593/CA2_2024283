@@ -1,0 +1,11 @@
+First name,Last name,Manager,Department
+Kate,Summer,Team Leader,Human Resources
+James,Anderson,Head Manager,Technical Support
+Ricardo,Scalfone,Senior Manager,Customer Service
+Lily,Shaw,Senior Manager,Customer Service
+Anna,Hawk,Head Manager,Human Resources
+Ximena,Peck,Head Manager,Technical Support
+Anna,Grey,Head Manager,Human Resources
+Sophie,Grey,Team Leader,Human Resources
+Jake,Dane,Team Leader,Customer Service
+Jake,Stone,Assistant Manager,Technical Support

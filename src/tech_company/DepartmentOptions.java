@@ -4,14 +4,16 @@
  */
 package tech_company;
 
+import static tech_company.Tech_Company.insertNumber;
+
 /**
  *
  * @author Luis
  */
 public enum DepartmentOptions {
-    Customer_Service(1, "Customer Service"),
-    Technical_Support(2, "Technical Support"),
-    HR(3, "Human Resources");
+    CUSTOMER_SERVICE(1, "Customer Service"),
+    TECHNICAL_SUPPORT(2, "Technical Support"),
+    HUMAN_RESOURCES(3, "Human Resources");
     private final int code;
     private final String description;
 
@@ -34,6 +36,24 @@ public enum DepartmentOptions {
         }
         return null;
     }
+    public static DepartmentOptions select(){
+        DepartmentOptions selectedDepartment;
+        boolean flag = false;
+        for (DepartmentOptions options : DepartmentOptions.values()) {
+                System.out.println(options);
+        }
+        do{
+            int option = insertNumber();
+            selectedDepartment = DepartmentOptions.fromCode(option);
+            if (selectedDepartment == null) {
+                System.out.println("Invalid choice, try again.");
+            }else{
+                flag = true;
+            }
+        }while(!flag);
+        return selectedDepartment;
+    }
+    
     @Override
     public String toString() {
         return code + ". " + description;

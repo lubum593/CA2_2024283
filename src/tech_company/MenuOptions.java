@@ -11,7 +11,7 @@ package tech_company;
 public enum MenuOptions {
     SORT(1, "SORT"),
     SEARCH(2, "SEARCH"),
-    ADD(3, "ADD RECORDS"),
+    ADD(3, "ADD EMPLOYEE"),
     EXIT(4, "EXIT");
     private final int code;
     private final String description;

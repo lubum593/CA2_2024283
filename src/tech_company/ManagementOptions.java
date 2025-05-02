@@ -4,6 +4,8 @@
  */
 package tech_company;
 
+import static tech_company.Tech_Company.insertNumber;
+
 /**
  *
  * @author Luis
@@ -34,6 +36,26 @@ public enum ManagementOptions {
             }
         }
         return null;
+    }
+    
+    public static ManagementOptions select(){
+        boolean flag = false;
+        int option = -1;
+        ManagementOptions selectedManagement;
+        System.out.println("Select Manager Type:");
+        for (ManagementOptions options : ManagementOptions.values()) {
+                System.out.println(options);
+        }
+        do{
+            option = insertNumber();
+            selectedManagement = ManagementOptions.fromCode(option);
+            if (selectedManagement == null) {
+                System.out.println("Invalid choice, try again.");
+            }else{
+                flag = true;
+            }
+        }while(!flag);
+        return selectedManagement;
     }
     
     @Override

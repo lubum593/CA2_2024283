@@ -10,26 +10,36 @@ package tech_company;
  */
 public class Employee {
     private String name;
-    private String management;
-    private String department;
+    private String surname;
+    private String gender;
+    private String email;
+    private String salary;
+    private String position;
+    private Department department;
+    private Manager management;
     
-    public Employee(String name, String management, String department){
+    
+    public Employee(String name, String surname, Manager management, Department department){
         this.name = name;
+        this.surname = surname;
         this.management = management;
         this.department = department;
     }
     public String getName(){
         return name;
     }
-    public String getManagement(){
+    public String getSurname(){
+        return surname;
+    }
+    public Manager getManagement(){
         return management;
     }
-    public String getDepartment(){
+    public Department getDepartment(){
         return department;
     }
     @Override
     public String toString() {
-        return name + " - " + management + " - " + department;
+        return name + " " + surname + " - " + management + " - " + department;
     }
     
 }
