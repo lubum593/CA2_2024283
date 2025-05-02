@@ -4,6 +4,9 @@
  */
 package tech_company;
 
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.Scanner;
 
@@ -14,22 +17,24 @@ import java.util.Scanner;
 public class Tech_Company {
     static Scanner sc = new Scanner(System.in);
     static List<Employee> employee = new ArrayList<>();
-    private final String fileName;
+    private static final String fileName = "Applicants_Form.txt";
     /**
      * @param args the command line arguments
      */
-    public Tech_Company(String fileName){//Constructor
+    public Tech_Company(){//Constructor
         this.employee = new ArrayList<>();
-        this.fileName = fileName;
+        //this.fileName = fileName;
     }
     
     public static void main(String[] args) {
         // TODO code application logic here
+        //String fileName = "Applicants_Form.txt";
+        loadFromFile(fileName);
         mainMenu();
     }
         
     public static void mainMenu(){
-        String fileName = "Applicants_Form.txt";
+        
         int option;
         do{
             System.out.println("Do You wish to SORT or SEARCH:");
@@ -51,7 +56,9 @@ public class Tech_Company {
             }
             switch (selectedOption) {
                 case SORT ->{
-                    System.out.println("Sorting");
+                    System.out.println("\nSorting employees by name aphabetically:");;
+                    mergeSort(employee, 0, employee.size()-1);
+                    displayList();
                 }
                 case SEARCH ->{
                     System.out.println("Searching");
@@ -71,7 +78,7 @@ public class Tech_Company {
                         switch (selectedAdd) {
                             case ADD_EMPLOYEE -> addEmployee();
                             case GENERATE_EMPLOYEE -> generateEmployee();
-                            case PRINT_EMPLOYEES -> System.out.println("The elements are: " + employee.toString()+"\n");
+                            case PRINT_EMPLOYEES -> displayList();
                         }
                     }while(AddOption<1&&AddOption>3);    
                 }
@@ -83,55 +90,82 @@ public class Tech_Company {
     
     
     private static void addEmployee() {
-        System.out.println("Enter Employee Name: ");
-        String name = insertName();
-        ManagementOptions selectedManagement;
-        String management = null;
-        String department = null;
-        boolean flag = false;
-        for (ManagementOptions options : ManagementOptions.values()) {
-                System.out.println(options);
-        }
-        do{
-            int option = insertNumber();
-            selectedManagement = ManagementOptions.fromCode(option);
-            if (selectedManagement == null) {
-                System.out.println("Invalid choice, try again.");
-            }else{
-                flag = true;
-            }
-        }while(!flag);
-        management = selectedManagement.getDescription();
-        DepartmentOptions selectedDepartment;
-        flag = false;
-        for (DepartmentOptions options : DepartmentOptions.values()) {
-                System.out.println(options);
-        }
-        do{
-            int option = insertNumber();
-            selectedDepartment = DepartmentOptions.fromCode(option);
-            if (selectedDepartment == null) {
-                System.out.println("Invalid choice, try again.");
-            }else{
-                flag = true;
-            }
-        }while(!flag);
-        department = selectedDepartment.getDescription();
-        employee.add(new Employee(name, management, department));
-        
-        System.out.println("\n"+name + " has been added as " + management + " to " + department + " successfully!\n");
+        System.out.println();
+        String name = insertName("Enter Employee Name: ");
+        String surname = insertName("Enter Employee surname: ");
+        Manager Manager = new Manager(ManagementOptions.select().getDescription());
+        Department department = new Department(DepartmentOptions.select().getDescription());
+        Employee newEmployee = new Employee(name, surname, Manager, department);
+        employee.add(newEmployee);
+        System.out.println("\n"+name + " " + surname + " has been added as " + Manager + " to " + department + " successfully!\n");
+        writeToFile(newEmployee, fileName);
     }
             
     private static void generateEmployee(){
-    
+        String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie"};
+        String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw"};
+        String[] managers = {"Team Leader", "Assistant Manager", "Senior Manager", "Head Manager"};
+        String[] departments = {"Customer Service", "Technical Support", "Human Resources"};
+        Random randomEmployee = new Random();
+        String name = names[randomEmployee.nextInt(names.length)];
+        String surname = surnames[randomEmployee.nextInt(surnames.length)];
+        Manager manager = new Manager(managers[randomEmployee.nextInt(managers.length)]);
+        Department department = new Department(departments[randomEmployee.nextInt(departments.length)]);
+        Employee newEmployee = new Employee(name, surname, manager, department);
+        employee.add(newEmployee);
+        writeToFile(newEmployee, fileName);
+        System.out.println("\n"+name + " " + surname + " has been added as " + manager + " to " + department + " successfully!\n");
+        
     }
     
+    private static void writeToFile(Employee employee, String fileName){
+        try(FileWriter writer = new FileWriter(fileName, true)){//true to append
+            String name = employee.getName();
+            String surname = employee.getSurname();
+            String manager = employee.getManagement().toString();
+            String department = employee.getDepartment().toString();
+            String line = String.format("%s,%s,%s,%s%n", name, surname, manager, department);
+            writer.write(line);            
+        }catch(IOException e){
+            System.out.println("Error writing into the file "+fileName+" "+e.getMessage());
+        }
+    }
     
-    
-    
-    
-    public static String insertName(){
+    public static void loadFromFile(String fileName) {
+        try(Scanner fileSC = new Scanner(new java.io.File(fileName))){
+            System.out.println("File "+fileName+" was read successfully\n");
+            if (fileSC.hasNextLine()) {
+                fileSC.nextLine();//with this line we skip the header of the document.
+            }
+            while(fileSC.hasNextLine()){
+                String line = fileSC.nextLine(); // Read the next line
+                String[] fields = line.split(","); // Split line into different parts
+                if (fields.length == 4) {
+                    String name = fields[0].trim();
+                    String surname = fields[1].trim();
+                    String managementStr = fields[2].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
+                    String departmentStr = fields[3].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
+                    try{
+                        Manager manager = new Manager(ManagementOptions.valueOf(managementStr).getDescription());
+                        Department department = new Department(DepartmentOptions.valueOf(departmentStr).getDescription());
+                        employee.add(new Employee(name, surname, manager, department));
+                    }catch(IllegalArgumentException  e){
+                        System.out.println("Invalid values: "+line);
+                    }
+                }
+            }
+            System.out.println("Employees were loaded from file "+fileName+" were loaded successfully\n");
+        }catch(Exception e){
+            System.out.println("Error reading the file: "+e.getMessage());
+        }
+        
+        
+        
+    }
+        
+    public static String insertName(String prompt){
         String name;
+        System.out.println(prompt);
         System.out.println("Only text please.");
         do{
             name = sc.nextLine();
@@ -149,6 +183,74 @@ public class Tech_Company {
             number = sc.nextLine();
         }
        return (Integer.parseInt(number));
+    }
+    
+    public static void displayList(){
+        int maxDisplay = Math.min(20, employee.size());//To display only 20 employees
+        System.out.println("\nList of employees:");
+        for (int i = 0; i < maxDisplay; i++) {
+            System.out.println(employee.get(i));
+        }
+        System.out.println("\n");
+    }
+    
+    
+    public static void mergeSort(List<Employee> employeeList, int left, int right){
+        if (left<right) {//Only if there is at least one element in the list
+            int middle = left + (right - left)/2;
+            mergeSort(employeeList, left, middle);//it will sort the left half recursively
+            mergeSort(employeeList, middle+1, right);//it will sort the right half recursively
+            merge(employeeList, left, middle, right);
+        }
+    }
+    
+    public static void merge(List<Employee> employeeList, int left, int middle, int right){
+        //creating two variables to get the sizes of each sublist
+        int leftSize = middle - left+1;
+        int rightSize = right - middle;
+        //Creating temporary lists for each half
+        List<Employee> leftList = new ArrayList<>();
+        List<Employee> rightList = new ArrayList<>();
+        // Copy into the temporary lists
+        for (int i = 0; i < leftSize; ++i)
+            leftList.add(employeeList.get(left + i));
+        for (int j = 0; j < rightSize; ++j)
+            rightList.add(employeeList.get(middle + 1 + j));
+        int i = 0, j=0;
+        int index = left;
+        while(i < leftSize && j < rightSize){//Here is where we are going to compare the list
+            String nameLeft = leftList.get(i).getName();
+            String nameRight = rightList.get(j).getName();
+            if (nameLeft.compareToIgnoreCase(nameRight)<0) {
+                employeeList.set(index, leftList.get(i));
+                i++;                        
+            }else if (nameRight.compareToIgnoreCase(nameLeft)<0){
+                employeeList.set(index,rightList.get(j));
+                j++;
+            }else if (nameLeft.compareToIgnoreCase(nameRight)==0) {//if they have the same name, it will check the last name to sort it
+                String surnameLeft = leftList.get(i).getSurname();
+                String surnameRight = rightList.get(j).getSurname();
+                if (surnameLeft.compareToIgnoreCase(surnameRight)<0) {
+                    employeeList.set(index, leftList.get(i));
+                    i++;                        
+                }else{
+                    employeeList.set(index,rightList.get(j));
+                    j++;
+                }
+            }
+            index++;
+        }
+        //Copying any remain from both lists
+        while (i < leftSize) {
+            employeeList.set(index, leftList.get(i));
+            i++;
+            index++;
+        }
+        while (j < rightSize) {
+            employeeList.set(index, rightList.get(j));
+            j++;
+            index++;
+        }
     }
     
 }
