@@ -1,4 +1,4 @@
-First name,Last name,Manager,Department
+First name,Last name,role,Manager,Department
 Kate,Summer,Team Leader,Human Resources
 James,Anderson,Head Manager,Technical Support
 Ricardo,Scalfone,Senior Manager,Customer Service
@@ -9,3 +9,18 @@ Anna,Grey,Head Manager,Human Resources
 Sophie,Grey,Team Leader,Human Resources
 Jake,Dane,Team Leader,Customer Service
 Jake,Stone,Assistant Manager,Technical Support
+Chris,Smith,Team Leader,Human Resources
+Sam,Brown,Team Leader,Technical Support
+Jordan,Dane,Senior Manager,Customer Service
+Lily,Smith,Assistant Manager,Customer Service
+Lily,Brown,Head Manager,Customer Service
+Jamie,Garcia,Assistant Manager,Technical Support
+Chris,Smith,Senior Manager,Customer Service
+Mark,Garcia,Team Leader,Human Resources
+Sam,Garcia,Team Leader,Customer Service
+Mark,Shaw,Assistant Manager,Customer Service
+Luis,Burgoa,Employee,Team Leader
+Alex,Grey,Tester,Head Manager
+Mia,Chi,Tester,Team Leader,Human Resources
+Luis,Burgoa,Tester,Team Leader,Customer Service
+Luis,Mario,Tester,Assistant Manager,Human Resources

@@ -11,10 +11,6 @@ package tech_company;
 public class Employee {
     private String name;
     private String surname;
-    private String gender;
-    private String email;
-    private String salary;
-    private String position;
     private Department department;
     private Manager management;
     

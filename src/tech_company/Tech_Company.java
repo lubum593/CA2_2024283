@@ -41,11 +41,11 @@ public class Tech_Company {
             for (MenuOptions options : MenuOptions.values()) {
                 System.out.println(options);
             }
-            System.out.println("Enter your choice:");
+            System.out.print("Enter your choice: ");
             while(!sc.hasNextInt()){
                 System.out.println("Invalid input! please only enter numbers.");
                 sc.next();
-                System.out.println("Enter your choice:");
+                System.out.println("Enter your choice: ");
             }
             option = sc.nextInt();
             MenuOptions selectedOption = MenuOptions.fromCode(option);
@@ -62,6 +62,9 @@ public class Tech_Company {
                 }
                 case SEARCH ->{
                     System.out.println("Searching");
+                    System.out.println("Enter the name of the employee you are looking for: ");
+                    mergeSort(employee, 0, employee.size()-1);
+                    binarySearch(employee, insertName("Enter the First Name: "), insertName("Enter the Surname: "),0, employee.size()-1);
                 }
                 case ADD ->{
                     int AddOption;
@@ -77,44 +80,65 @@ public class Tech_Company {
                         }
                         switch (selectedAdd) {
                             case ADD_EMPLOYEE -> addEmployee();
-                            case GENERATE_EMPLOYEE -> generateEmployee();
+                            case GENERATE_EMPLOYEE -> generateEmployee(insertNumber());
                             case PRINT_EMPLOYEES -> displayList();
                         }
                     }while(AddOption<1&&AddOption>3);    
                 }
                 case EXIT -> System.out.println("Exiting...");
             }
-            
         }while(option!= MenuOptions.EXIT.getCode());
     }
     
     
     private static void addEmployee() {
         System.out.println();
-        String name = insertName("Enter Employee Name: ");
-        String surname = insertName("Enter Employee surname: ");
-        Manager Manager = new Manager(ManagementOptions.select().getDescription());
-        Department department = new Department(DepartmentOptions.select().getDescription());
-        Employee newEmployee = new Employee(name, surname, Manager, department);
+        String name = insertName("Enter Employee First Name: ");
+        String surname = insertName("Enter Employee Surname: ");
+        
+        //Employee newEmployee = new Employee(name, surname, Manager, department);
+        Employee newEmployee = null;
+            //Employee newEmployee = new Employee(name, surname, manager, department);
+            
+            System.out.println("\n-- Choose Employee Type --");
+            System.out.println("1. Developer");
+            System.out.println("2. Designer");
+            System.out.println("3. Tester");
+            System.out.print("Enter choice: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
+            Manager Manager = new Manager(ManagementOptions.select().getDescription());
+            Department department = new Department(DepartmentOptions.select().getDescription());
+            switch(choice){
+                case 1:
+                    newEmployee = new Developer(name, surname, Manager, department);
+                case 2:
+                    //newEmployee = new Designer(name, surname, manager, department);
+                case 3:
+                    newEmployee = new Tester(name, surname, Manager, department);
+            }
         employee.add(newEmployee);
         System.out.println("\n"+name + " " + surname + " has been added as " + Manager + " to " + department + " successfully!\n");
         writeToFile(newEmployee, fileName);
     }
             
-    private static void generateEmployee(){
+    private static void generateEmployee(int numberEmployees){
         String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie"};
         String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw"};
+        
         String[] managers = {"Team Leader", "Assistant Manager", "Senior Manager", "Head Manager"};
         String[] departments = {"Customer Service", "Technical Support", "Human Resources"};
-        Random randomEmployee = new Random();
-        String name = names[randomEmployee.nextInt(names.length)];
-        String surname = surnames[randomEmployee.nextInt(surnames.length)];
-        Manager manager = new Manager(managers[randomEmployee.nextInt(managers.length)]);
-        Department department = new Department(departments[randomEmployee.nextInt(departments.length)]);
-        Employee newEmployee = new Employee(name, surname, manager, department);
-        employee.add(newEmployee);
-        writeToFile(newEmployee, fileName);
-        System.out.println("\n"+name + " " + surname + " has been added as " + manager + " to " + department + " successfully!\n");
+        for (int i = 0; i < numberEmployees; i++) {
+            Random randomEmployee = new Random();
+            String name = names[randomEmployee.nextInt(names.length)];
+            String surname = surnames[randomEmployee.nextInt(surnames.length)];
+            Manager manager = new Manager(managers[randomEmployee.nextInt(managers.length)]);
+            Department department = new Department(departments[randomEmployee.nextInt(departments.length)]);
+            Employee newEmployee = new Employee(name, surname, manager, department);
+            employee.add(newEmployee);
+            writeToFile(newEmployee, fileName);
+            System.out.println("\n"+name + " " + surname + " has been added as " + manager + " to " + department + " successfully!\n");
+        }
         
     }
     
@@ -123,8 +147,9 @@ public class Tech_Company {
             String name = employee.getName();
             String surname = employee.getSurname();
             String manager = employee.getManagement().toString();
+            String role = employee.getClass().getSimpleName();
             String department = employee.getDepartment().toString();
-            String line = String.format("%s,%s,%s,%s%n", name, surname, manager, department);
+            String line = String.format("%s,%s,%s,%s,%s%n", name, surname, role, manager, department);
             writer.write(line);            
         }catch(IOException e){
             System.out.println("Error writing into the file "+fileName+" "+e.getMessage());
@@ -164,18 +189,21 @@ public class Tech_Company {
     }
         
     public static String insertName(String prompt){
-        String name;
-        System.out.println(prompt);
-        System.out.println("Only text please.");
+        String name="";
+        System.out.print(prompt);
         do{
             name = sc.nextLine();
-        }while(!name.matches("[a-zA-Z !.,@?\"]+"));
+            if (!name.matches("[a-zA-Z]+")||(name.length()<3)) {
+                System.out.println("Name format incorrect, please try again.");
+                System.out.print(prompt);
+            }
+        }while(!name.matches("[a-zA-Z]+")||(name.length()<3));
         return name;
     }
     
     public static int insertNumber(){
+        System.out.print("Enter your choice: ");
         String number = sc.nextLine();
-        System.out.println("Enter your choice: ");
         while(!number.matches("[0-9]+")){
             if (!number.matches("")) {
                 System.out.println("You must enter numbers only");
@@ -250,6 +278,32 @@ public class Tech_Company {
             employeeList.set(index, rightList.get(j));
             j++;
             index++;
+        }
+    }
+    
+    private static void binarySearch(List<Employee> list, String name, String surname, int left, int right){
+        if (left > right) {
+            System.out.println("Employee not found.\n");
+            return;
+        }
+        int middle = left + (right - left)/2;
+        String employeeName = list.get(middle).getName();
+        String employeeSurname = list.get(middle).getSurname().trim();
+        //Employee result = new Employee();
+        if ((employeeName.compareToIgnoreCase(name))==0) {//If the name matches
+            if (employeeSurname.compareToIgnoreCase(surname.trim())==0) {//If the lastname matches
+                //return list.get(middle);//The employee was found
+                System.out.println("Result found: \n");
+                System.out.println("Name: "+list.get(middle).getName()+" "+list.get(middle).getSurname()+"\n");
+                System.out.println("Manager Type: "+list.get(middle).getManagement()+"\n");
+                System.out.println("Department: "+list.get(middle).getDepartment()+"\n");
+            }
+        }else{
+            if ((employeeName.compareToIgnoreCase(name))> 0) {
+                binarySearch(list, name, surname, left, middle-1);
+            }else{
+                binarySearch(list, name, surname, middle+1, right);
+            }
         }
     }
     
