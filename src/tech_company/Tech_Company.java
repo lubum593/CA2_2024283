@@ -5,6 +5,9 @@
 package tech_company;
 
 
+import tech_company.enums.AdditionOptions;
+import tech_company.enums.ManagementOptions;
+import tech_company.enums.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -58,12 +61,12 @@ public class Tech_Company {
                 case SORT ->{
                     System.out.println("\nSorting employees by name aphabetically:");;
                     mergeSort(employee, 0, employee.size()-1);
-                    displayList();
+                    displayList(true);//Display only 20 employees
                 }
                 case SEARCH ->{
                     System.out.println("Searching");
                     System.out.println("Enter the name of the employee you are looking for: ");
-                    mergeSort(employee, 0, employee.size()-1);
+                    mergeSort(employee, 0, employee.size()-1);//We Sort the list before using the binary Search.
                     binarySearch(employee, insertName("Enter the First Name: "), insertName("Enter the Surname: "),0, employee.size()-1);
                 }
                 case ADD ->{
@@ -81,7 +84,7 @@ public class Tech_Company {
                         switch (selectedAdd) {
                             case ADD_EMPLOYEE -> addEmployee();
                             case GENERATE_EMPLOYEE -> generateEmployee(insertNumber());
-                            case PRINT_EMPLOYEES -> displayList();
+                            case PRINT_EMPLOYEES -> displayList(false);//Display the whole list
                         }
                     }while(AddOption<1&&AddOption>3);    
                 }
@@ -95,27 +98,29 @@ public class Tech_Company {
         System.out.println();
         String name = insertName("Enter Employee First Name: ");
         String surname = insertName("Enter Employee Surname: ");
-        
-        //Employee newEmployee = new Employee(name, surname, Manager, department);
         Employee newEmployee = null;
-            //Employee newEmployee = new Employee(name, surname, manager, department);
-            
-            System.out.println("\n-- Choose Employee Type --");
-            System.out.println("1. Developer");
-            System.out.println("2. Designer");
-            System.out.println("3. Tester");
-            System.out.print("Enter choice: ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+            int choice;
+            do{
+                System.out.println("\n-- Choose Employee Type --");
+                for (EmployeeOptions options : EmployeeOptions.values()) {
+                    System.out.println(options);
+                }
+                System.out.print("Enter your choice: ");
+                while(!sc.hasNextInt()){
+                    System.out.println("Invalid input! please only enter numbers.");
+                    sc.next();
+                    System.out.print("Enter your choice: ");
+                }
+                choice = sc.nextInt();
+                sc.nextLine();
+            }while(choice>EmployeeOptions.values().length);
+                        
             Manager Manager = new Manager(ManagementOptions.select().getDescription());
             Department department = new Department(DepartmentOptions.select().getDescription());
             switch(choice){
-                case 1:
-                    newEmployee = new Developer(name, surname, Manager, department);
-                case 2:
-                    //newEmployee = new Designer(name, surname, manager, department);
-                case 3:
-                    newEmployee = new Tester(name, surname, Manager, department);
+                case 1 -> newEmployee = new Developer(name, surname, Manager, department);
+                case 2 ->  newEmployee = new Tester(name, surname, Manager, department);
+                case 3 ->  newEmployee = new Designer(name, surname, Manager, department);
             }
         employee.add(newEmployee);
         System.out.println("\n"+name + " " + surname + " has been added as " + Manager + " to " + department + " successfully!\n");
@@ -123,21 +128,27 @@ public class Tech_Company {
     }
             
     private static void generateEmployee(int numberEmployees){
-        String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie"};
-        String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw"};
-        
-        String[] managers = {"Team Leader", "Assistant Manager", "Senior Manager", "Head Manager"};
-        String[] departments = {"Customer Service", "Technical Support", "Human Resources"};
+        String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie","Mia","Amy","Paul"};
+        String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw", "Silva"};
+        Employee newEmployee = null;
         for (int i = 0; i < numberEmployees; i++) {
             Random randomEmployee = new Random();
             String name = names[randomEmployee.nextInt(names.length)];
             String surname = surnames[randomEmployee.nextInt(surnames.length)];
-            Manager manager = new Manager(managers[randomEmployee.nextInt(managers.length)]);
-            Department department = new Department(departments[randomEmployee.nextInt(departments.length)]);
-            Employee newEmployee = new Employee(name, surname, manager, department);
+            EmployeeOptions employeeOption = EmployeeOptions.values()[randomEmployee.nextInt(EmployeeOptions.values().length)];//We get a random value from the enum of employeeOptions
+            int EmployeeOption = employeeOption.getCode();
+            ManagementOptions managerOption = ManagementOptions.values()[randomEmployee.nextInt(ManagementOptions.values().length)];//We get a random value from the enum of ManagerOptions
+            Manager manager = new Manager(managerOption.getDescription());
+            DepartmentOptions departmentOption = DepartmentOptions.values()[randomEmployee.nextInt(DepartmentOptions.values().length)];//We get a random value from the enum of DepartmentOptions
+            Department department = new Department(departmentOption.getDescription());
+            switch(EmployeeOption){
+                case 1 -> newEmployee = new Developer(name, surname, manager, department);
+                case 2 -> newEmployee = new Tester(name, surname, manager, department);
+                case 3 -> newEmployee = new Designer(name, surname, manager, department);
+            }
             employee.add(newEmployee);
             writeToFile(newEmployee, fileName);
-            System.out.println("\n"+name + " " + surname + " has been added as " + manager + " to " + department + " successfully!\n");
+            System.out.print("\n"+name + " " + surname + " " + employeeOption.getDescription() +" has been added as " + manager + " to " + department + " successfully!\n");
         }
         
     }
@@ -147,7 +158,7 @@ public class Tech_Company {
             String name = employee.getName();
             String surname = employee.getSurname();
             String manager = employee.getManagement().toString();
-            String role = employee.getClass().getSimpleName();
+            String role = employee.getClass().getSimpleName();//we get the simple name from the child class
             String department = employee.getDepartment().toString();
             String line = String.format("%s,%s,%s,%s,%s%n", name, surname, role, manager, department);
             writer.write(line);            
@@ -165,15 +176,29 @@ public class Tech_Company {
             while(fileSC.hasNextLine()){
                 String line = fileSC.nextLine(); // Read the next line
                 String[] fields = line.split(","); // Split line into different parts
-                if (fields.length == 4) {
+                if (fields.length == 5) {
                     String name = fields[0].trim();
                     String surname = fields[1].trim();
-                    String managementStr = fields[2].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
-                    String departmentStr = fields[3].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
+                    String position = fields[2].trim().toUpperCase().replace(" ", "_");//To normalize the format to EmployeeOptions
+                    String managementStr = fields[3].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
+                    String departmentStr = fields[4].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
                     try{
                         Manager manager = new Manager(ManagementOptions.valueOf(managementStr).getDescription());
                         Department department = new Department(DepartmentOptions.valueOf(departmentStr).getDescription());
-                        employee.add(new Employee(name, surname, manager, department));
+                        EmployeeOptions option = EmployeeOptions.fromDescription(position);
+                        Employee newEmployee = null;
+                        switch(option.getCode()){
+                            case 1: 
+                                newEmployee = new Developer(name, surname, manager, department);
+                                break;
+                            case 2: 
+                                newEmployee = new Tester(name, surname, manager, department);
+                                break;
+                            case 3: 
+                                newEmployee = new Designer(name, surname, manager, department);
+                                break; 
+                        }
+                        employee.add(newEmployee);
                     }catch(IllegalArgumentException  e){
                         System.out.println("Invalid values: "+line);
                     }
@@ -213,8 +238,14 @@ public class Tech_Company {
        return (Integer.parseInt(number));
     }
     
-    public static void displayList(){
-        int maxDisplay = Math.min(20, employee.size());//To display only 20 employees
+    public static void displayList(boolean max){
+        int maxDisplay;
+        if (max) {
+            maxDisplay = Math.min(20, employee.size());//To display only 20 employees
+        }else{
+            maxDisplay = employee.size();
+        }
+        
         System.out.println("\nList of employees:");
         for (int i = 0; i < maxDisplay; i++) {
             System.out.println(employee.get(i));
