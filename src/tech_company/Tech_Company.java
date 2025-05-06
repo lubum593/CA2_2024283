@@ -5,8 +5,6 @@
 package tech_company;
 
 
-import tech_company.enums.AdditionOptions;
-import tech_company.enums.ManagementOptions;
 import tech_company.enums.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -208,9 +206,6 @@ public class Tech_Company {
         }catch(Exception e){
             System.out.println("Error reading the file: "+e.getMessage());
         }
-        
-        
-        
     }
         
     public static String insertName(String prompt){
@@ -320,7 +315,6 @@ public class Tech_Company {
         int middle = left + (right - left)/2;
         String employeeName = list.get(middle).getName();
         String employeeSurname = list.get(middle).getSurname().trim();
-        //Employee result = new Employee();
         if ((employeeName.compareToIgnoreCase(name))==0) {//If the name matches
             if (employeeSurname.compareToIgnoreCase(surname.trim())==0) {//If the lastname matches
                 //return list.get(middle);//The employee was found
