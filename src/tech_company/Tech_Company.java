@@ -5,6 +5,8 @@
 package tech_company;
 
 
+import InputUtilities.InputUtilities;
+import Subclasses.*;
 import tech_company.enums.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.Scanner;
  */
 public class Tech_Company {
     static Scanner sc = new Scanner(System.in);
+    static InputUtilities input = new InputUtilities();
     static List<Employee> employee = new ArrayList<>();
     private static final String fileName = "Applicants_Form.txt";
     /**
@@ -65,7 +68,7 @@ public class Tech_Company {
                     System.out.println("Searching");
                     System.out.println("Enter the name of the employee you are looking for: ");
                     mergeSort(employee, 0, employee.size()-1);//We Sort the list before using the binary Search.
-                    binarySearch(employee, insertName("Enter the First Name: "), insertName("Enter the Surname: "),0, employee.size()-1);
+                    binarySearch(employee, input.insertName("Enter the First Name: "), input.insertName("Enter the Surname: "),0, employee.size()-1);
                 }
                 case ADD ->{
                     int AddOption;
@@ -73,7 +76,7 @@ public class Tech_Company {
                         for (AdditionOptions options : AdditionOptions.values()) {
                         System.out.println(options);
                         }
-                        AddOption = insertNumber();
+                        AddOption = input.insertNumber();
                         AdditionOptions selectedAdd = AdditionOptions.fromCode(AddOption);
                         if (selectedAdd == null) {
                             System.out.println("Invalid choice, try again.");
@@ -81,7 +84,7 @@ public class Tech_Company {
                         }
                         switch (selectedAdd) {
                             case ADD_EMPLOYEE -> addEmployee();
-                            case GENERATE_EMPLOYEE -> generateEmployee(insertNumber());
+                            case GENERATE_EMPLOYEE -> generateEmployee(input.insertNumber());
                             case PRINT_EMPLOYEES -> displayList(false);//Display the whole list
                         }
                     }while(AddOption<1&&AddOption>3);    
@@ -94,8 +97,8 @@ public class Tech_Company {
     
     private static void addEmployee() {
         System.out.println();
-        String name = insertName("Enter Employee First Name: ");
-        String surname = insertName("Enter Employee Surname: ");
+        String name = input.insertName("Enter Employee First Name: ");
+        String surname = input.insertName("Enter Employee Surname: ");
         Employee newEmployee = null;
             int choice;
             do{
@@ -112,8 +115,8 @@ public class Tech_Company {
                 choice = sc.nextInt();
                 sc.nextLine();
             }while(choice>EmployeeOptions.values().length);
-                        
-            Manager Manager = new Manager(ManagementOptions.select().getDescription());
+            Manager L = new TeamLeader(ManagerOptions.select().getDescription());
+            Manager Manager = new Manager(ManagerOptions.select().getDescription());
             Department department = new Department(DepartmentOptions.select().getDescription());
             switch(choice){
                 case 1 -> newEmployee = new Developer(name, surname, Manager, department);
@@ -135,7 +138,7 @@ public class Tech_Company {
             String surname = surnames[randomEmployee.nextInt(surnames.length)];
             EmployeeOptions employeeOption = EmployeeOptions.values()[randomEmployee.nextInt(EmployeeOptions.values().length)];//We get a random value from the enum of employeeOptions
             int EmployeeOption = employeeOption.getCode();
-            ManagementOptions managerOption = ManagementOptions.values()[randomEmployee.nextInt(ManagementOptions.values().length)];//We get a random value from the enum of ManagerOptions
+            ManagerOptions managerOption = ManagerOptions.values()[randomEmployee.nextInt(ManagerOptions.values().length)];//We get a random value from the enum of ManagerOptions
             Manager manager = new Manager(managerOption.getDescription());
             DepartmentOptions departmentOption = DepartmentOptions.values()[randomEmployee.nextInt(DepartmentOptions.values().length)];//We get a random value from the enum of DepartmentOptions
             Department department = new Department(departmentOption.getDescription());
@@ -181,7 +184,7 @@ public class Tech_Company {
                     String managementStr = fields[3].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
                     String departmentStr = fields[4].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
                     try{
-                        Manager manager = new Manager(ManagementOptions.valueOf(managementStr).getDescription());
+                        Manager manager = new Manager(ManagerOptions.valueOf(managementStr).getDescription());
                         Department department = new Department(DepartmentOptions.valueOf(departmentStr).getDescription());
                         EmployeeOptions option = EmployeeOptions.fromDescription(position);
                         Employee newEmployee = null;
@@ -207,32 +210,7 @@ public class Tech_Company {
             System.out.println("Error reading the file: "+e.getMessage());
         }
     }
-        
-    public static String insertName(String prompt){
-        String name="";
-        System.out.print(prompt);
-        do{
-            name = sc.nextLine();
-            if (!name.matches("[a-zA-Z]+")||(name.length()<3)) {
-                System.out.println("Name format incorrect, please try again.");
-                System.out.print(prompt);
-            }
-        }while(!name.matches("[a-zA-Z]+")||(name.length()<3));
-        return name;
-    }
-    
-    public static int insertNumber(){
-        System.out.print("Enter your choice: ");
-        String number = sc.nextLine();
-        while(!number.matches("[0-9]+")){
-            if (!number.matches("")) {
-                System.out.println("You must enter numbers only");
-            }
-            number = sc.nextLine();
-        }
-       return (Integer.parseInt(number));
-    }
-    
+     
     public static void displayList(boolean max){
         int maxDisplay;
         if (max) {

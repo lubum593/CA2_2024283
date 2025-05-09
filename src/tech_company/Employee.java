@@ -8,7 +8,7 @@ package tech_company;
  *
  * @author Luis
  */
-public class Employee {
+public abstract class Employee {
     private String name;
     private String surname;
     private Department department;
@@ -35,7 +35,7 @@ public class Employee {
     }
     @Override
     public String toString() {
-        return name + " " + surname + " - " + management + " - " + department;
+        return name + " " + surname + " - " + getClass().getSimpleName() +" - " + management + " - " + department;
     }
     
 }
