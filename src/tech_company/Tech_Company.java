@@ -5,7 +5,7 @@
 package tech_company;
 
 
-import InputUtilities.InputUtilities;
+import InputUtilities.*;
 import Subclasses.*;
 import tech_company.enums.*;
 import java.io.FileWriter;
@@ -22,18 +22,17 @@ public class Tech_Company {
     static InputUtilities input = new InputUtilities();
     static List<Employee> employee = new ArrayList<>();
     private static final String fileName = "Applicants_Form.txt";
+    
     /**
      * @param args the command line arguments
      */
     public Tech_Company(){//Constructor
         this.employee = new ArrayList<>();
-        //this.fileName = fileName;
     }
     
     public static void main(String[] args) {
         // TODO code application logic here
-        //String fileName = "Applicants_Form.txt";
-        loadFromFile(fileName);
+        loadFromFile(fileName);//Load our database stored in our .txt File
         mainMenu();
     }
         
@@ -71,85 +70,72 @@ public class Tech_Company {
                     binarySearch(employee, input.insertName("Enter the First Name: "), input.insertName("Enter the Surname: "),0, employee.size()-1);
                 }
                 case ADD ->{
-                    int AddOption;
-                    do{
-                        for (AdditionOptions options : AdditionOptions.values()) {
-                        System.out.println(options);
-                        }
-                        AddOption = input.insertNumber();
-                        AdditionOptions selectedAdd = AdditionOptions.fromCode(AddOption);
-                        if (selectedAdd == null) {
-                            System.out.println("Invalid choice, try again.");
-                            continue;
-                        }
-                        switch (selectedAdd) {
-                            case ADD_EMPLOYEE -> addEmployee();
-                            case GENERATE_EMPLOYEE -> generateEmployee(input.insertNumber());
-                            case PRINT_EMPLOYEES -> displayList(false);//Display the whole list
-                        }
-                    }while(AddOption<1&&AddOption>3);    
+                    int selectedAddition = AdditionOptions.select().getCode();
+                    switch (selectedAddition) {
+                            case 1 -> addEmployee();
+                            case 2 -> generateEmployee(input.insertNumber());
+                            case 3 -> displayList(false);//Display the whole list
+                    }
                 }
                 case EXIT -> System.out.println("Exiting...");
             }
         }while(option!= MenuOptions.EXIT.getCode());
     }
     
-    
     private static void addEmployee() {
-        System.out.println();
+        System.out.println("\n-- Adding new Employee --");
         String name = input.insertName("Enter Employee First Name: ");
         String surname = input.insertName("Enter Employee Surname: ");
-        Employee newEmployee = null;
-            int choice;
-            do{
-                System.out.println("\n-- Choose Employee Type --");
-                for (EmployeeOptions options : EmployeeOptions.values()) {
-                    System.out.println(options);
-                }
-                System.out.print("Enter your choice: ");
-                while(!sc.hasNextInt()){
-                    System.out.println("Invalid input! please only enter numbers.");
-                    sc.next();
-                    System.out.print("Enter your choice: ");
-                }
-                choice = sc.nextInt();
-                sc.nextLine();
-            }while(choice>EmployeeOptions.values().length);
-            Manager L = new TeamLeader(ManagerOptions.select().getDescription());
-            Manager Manager = new Manager(ManagerOptions.select().getDescription());
-            Department department = new Department(DepartmentOptions.select().getDescription());
-            switch(choice){
-                case 1 -> newEmployee = new Developer(name, surname, Manager, department);
-                case 2 ->  newEmployee = new Tester(name, surname, Manager, department);
-                case 3 ->  newEmployee = new Designer(name, surname, Manager, department);
-            }
-        employee.add(newEmployee);
-        System.out.println("\n"+name + " " + surname + " has been added as " + Manager + " to " + department + " successfully!\n");
-        writeToFile(newEmployee, fileName);
+        int employeeChoice = EmployeeOptions.select().getCode();
+        int managerChoice = ManagerOptions.select().getCode();
+        int departmentChoice = DepartmentOptions.select().getCode();
+        createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, false);
     }
-            
+    
+    private static void createEmployee(String name, String surname, int choiceEmployee, int managerChoice, int departmentChoice, boolean loadFiles){
+        Employee newEmployee = null;
+        Manager newManager = null;
+        Department newDepartment = null;
+        String managerOption = ManagerOptions.fromCode(managerChoice).getDescription();
+        String departmentOption = DepartmentOptions.fromCode(departmentChoice).getDescription();
+        switch(managerChoice){
+                case 1 -> newManager = new TeamLeader(managerOption);
+                case 2 -> newManager = new AssistantManager(managerOption);
+                case 3 -> newManager = new SeniorManager(managerOption);
+                case 4 -> newManager = new HeadManager(managerOption);
+        }
+        switch(departmentChoice){
+                case 1 -> newDepartment = new CustomerService(departmentOption);
+                case 2 ->  newDepartment = new TechnicalSupport(departmentOption);
+                case 3 ->  newDepartment = new HumanResources(departmentOption);
+        }
+        switch(choiceEmployee){
+                case 1 -> newEmployee = new Developer(name, surname, newManager, newDepartment);
+                case 2 ->  newEmployee = new Tester(name, surname, newManager, newDepartment);
+                case 3 ->  newEmployee = new Designer(name, surname, newManager, newDepartment);
+        }
+        employee.add(newEmployee);
+        if (!loadFiles) {//To avoid printing the list when the system load from the .txt file
+            System.out.println("\n"+name + " " + surname + " has been added as " + newEmployee.getClass().getSimpleName()+ " under the management of " + newManager + " to " + newDepartment + " successfully!\n");
+            writeToFile(newEmployee, fileName);
+        }        
+    }
+    
     private static void generateEmployee(int numberEmployees){
+        System.out.println("\n-- Generate Employees --");
         String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie","Mia","Amy","Paul"};
         String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw", "Silva"};
-        Employee newEmployee = null;
         for (int i = 0; i < numberEmployees; i++) {
             Random randomEmployee = new Random();
             String name = names[randomEmployee.nextInt(names.length)];
             String surname = surnames[randomEmployee.nextInt(surnames.length)];
             EmployeeOptions employeeOption = EmployeeOptions.values()[randomEmployee.nextInt(EmployeeOptions.values().length)];//We get a random value from the enum of employeeOptions
-            int EmployeeOption = employeeOption.getCode();
             ManagerOptions managerOption = ManagerOptions.values()[randomEmployee.nextInt(ManagerOptions.values().length)];//We get a random value from the enum of ManagerOptions
-            Manager manager = new Manager(managerOption.getDescription());
             DepartmentOptions departmentOption = DepartmentOptions.values()[randomEmployee.nextInt(DepartmentOptions.values().length)];//We get a random value from the enum of DepartmentOptions
-            Department department = new Department(departmentOption.getDescription());
-            switch(EmployeeOption){
-                case 1 -> newEmployee = new Developer(name, surname, manager, department);
-                case 2 -> newEmployee = new Tester(name, surname, manager, department);
-                case 3 -> newEmployee = new Designer(name, surname, manager, department);
-            }
-            employee.add(newEmployee);
-            writeToFile(newEmployee, fileName);
-            System.out.print("\n"+name + " " + surname + " " + employeeOption.getDescription() +" has been added as " + manager + " to " + department + " successfully!\n");
+            int employeeChoice = employeeOption.getCode();
+            int managerChoice = managerOption.getCode();
+            int departmentChoice = departmentOption.getCode();
+            createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, false);
         }
         
     }
@@ -159,9 +145,9 @@ public class Tech_Company {
             String name = employee.getName();
             String surname = employee.getSurname();
             String manager = employee.getManagement().toString();
-            String role = employee.getClass().getSimpleName();//we get the simple name from the child class
+            String position = employee.getClass().getSimpleName();//we get the simple name from the child class
             String department = employee.getDepartment().toString();
-            String line = String.format("%s,%s,%s,%s,%s%n", name, surname, role, manager, department);
+            String line = String.format("%s,%s,%s,%s,%s%n", name, surname, position, manager, department);
             writer.write(line);            
         }catch(IOException e){
             System.out.println("Error writing into the file "+fileName+" "+e.getMessage());
@@ -184,22 +170,10 @@ public class Tech_Company {
                     String managementStr = fields[3].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
                     String departmentStr = fields[4].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
                     try{
-                        Manager manager = new Manager(ManagerOptions.valueOf(managementStr).getDescription());
-                        Department department = new Department(DepartmentOptions.valueOf(departmentStr).getDescription());
-                        EmployeeOptions option = EmployeeOptions.fromDescription(position);
-                        Employee newEmployee = null;
-                        switch(option.getCode()){
-                            case 1: 
-                                newEmployee = new Developer(name, surname, manager, department);
-                                break;
-                            case 2: 
-                                newEmployee = new Tester(name, surname, manager, department);
-                                break;
-                            case 3: 
-                                newEmployee = new Designer(name, surname, manager, department);
-                                break; 
-                        }
-                        employee.add(newEmployee);
+                        int employeeChoice = EmployeeOptions.fromDescription(position).getCode();
+                        int managerChoice = ManagerOptions.valueOf(managementStr).getCode();
+                        int departmentChoice = DepartmentOptions.valueOf(departmentStr).getCode();
+                        createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, true);
                     }catch(IllegalArgumentException  e){
                         System.out.println("Invalid values: "+line);
                     }
