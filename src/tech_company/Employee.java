@@ -9,17 +9,26 @@ package tech_company;
  * @author Luis
  */
 public abstract class Employee {
+    private int ID;
     private String name;
     private String surname;
+    private String position;
+    private Compensation compensation;
     private Department department;
-    private Manager management;
+    private Entity entity;
     
     
-    public Employee(String name, String surname, Manager management, Department department){
+    public Employee(int ID, String name, String surname, String position, Compensation compensation, Department department, Entity entity){
+        this.ID = ID;
         this.name = name;
         this.surname = surname;
-        this.management = management;
+        this.position = position;
+        this.compensation = compensation;
         this.department = department;
+        this.entity = entity;
+    }
+    public int getID(){
+        return ID;
     }
     public String getName(){
         return name;
@@ -27,15 +36,21 @@ public abstract class Employee {
     public String getSurname(){
         return surname;
     }
-    public Manager getManagement(){
-        return management;
+    public String getPosition(){
+        return position;
     }
+    public Compensation getCompensation(){
+        return compensation;
+    }    
     public Department getDepartment(){
         return department;
     }
+    public Entity getEntity(){
+        return entity;
+    }
     @Override
     public String toString() {
-        return name + " " + surname + " - " + getClass().getSimpleName() +" - " + management + " - " + department;
+        return name + " " + surname + " - " + position + " - " + compensation + " - " + department + " - " + entity;
     }
     
 }

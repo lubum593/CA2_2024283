@@ -5,8 +5,13 @@
 package tech_company;
 
 
+import Employee.Tester;
+import Employee.Developer;
+import Employee.Designer;
+import Compensation.*;
+import Department.*;
+import Entity.*;
 import InputUtilities.*;
-import Subclasses.*;
 import tech_company.enums.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,17 +23,14 @@ import java.util.Scanner;
  * @author Luis
  */
 public class Tech_Company {
-    static Scanner sc = new Scanner(System.in);
     static InputUtilities input = new InputUtilities();
+    static int ID = 0;
     static List<Employee> employee = new ArrayList<>();
     private static final String fileName = "Applicants_Form.txt";
     
     /**
      * @param args the command line arguments
      */
-    public Tech_Company(){//Constructor
-        this.employee = new ArrayList<>();
-    }
     
     public static void main(String[] args) {
         // TODO code application logic here
@@ -37,49 +39,31 @@ public class Tech_Company {
     }
         
     public static void mainMenu(){
-        
-        int option;
+        MenuOptions selectedMenu;
         do{
-            System.out.println("Do You wish to SORT or SEARCH:");
-            for (MenuOptions options : MenuOptions.values()) {
-                System.out.println(options);
-            }
-            System.out.print("Enter your choice: ");
-            while(!sc.hasNextInt()){
-                System.out.println("Invalid input! please only enter numbers.");
-                sc.next();
-                System.out.println("Enter your choice: ");
-            }
-            option = sc.nextInt();
-            MenuOptions selectedOption = MenuOptions.fromCode(option);
-            
-            if (selectedOption == null) {
-                System.out.println("Invalid choice, try again.");
-                continue;//This is going to allow the program to continue
-            }
-            switch (selectedOption) {
+            selectedMenu = MenuOptions.select();
+            switch (selectedMenu) {
                 case SORT ->{
-                    System.out.println("\nSorting employees by name aphabetically:");;
+                    System.out.println("\nSorting employees by name aphabetically:");
                     mergeSort(employee, 0, employee.size()-1);
                     displayList(true);//Display only 20 employees
                 }
                 case SEARCH ->{
-                    System.out.println("Searching");
-                    System.out.println("Enter the name of the employee you are looking for: ");
-                    mergeSort(employee, 0, employee.size()-1);//We Sort the list before using the binary Search.
+                    System.out.println("\n-- Search Employee --");
+                    mergeSort(employee, 0, employee.size()-1);//We Sort the list before using the binary Search (It is a requirement).
                     binarySearch(employee, input.insertName("Enter the First Name: "), input.insertName("Enter the Surname: "),0, employee.size()-1);
                 }
                 case ADD ->{
                     int selectedAddition = AdditionOptions.select().getCode();
                     switch (selectedAddition) {
                             case 1 -> addEmployee();
-                            case 2 -> generateEmployee(input.insertNumber());
+                            case 2 -> generateEmployee();
                             case 3 -> displayList(false);//Display the whole list
                     }
                 }
                 case EXIT -> System.out.println("Exiting...");
             }
-        }while(option!= MenuOptions.EXIT.getCode());
+        }while(selectedMenu != MenuOptions.EXIT);
     }
     
     private static void addEmployee() {
@@ -87,67 +71,80 @@ public class Tech_Company {
         String name = input.insertName("Enter Employee First Name: ");
         String surname = input.insertName("Enter Employee Surname: ");
         int employeeChoice = EmployeeOptions.select().getCode();
-        int managerChoice = ManagerOptions.select().getCode();
+        int compensationChoice = CompensationOptions.select().getCode();
         int departmentChoice = DepartmentOptions.select().getCode();
-        createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, false);
+        int EntityChoice = EntityOptions.select().getCode();
+        ID++;
+        createEmployee(name, surname, employeeChoice, compensationChoice, departmentChoice, EntityChoice, false);
     }
     
-    private static void createEmployee(String name, String surname, int choiceEmployee, int managerChoice, int departmentChoice, boolean loadFiles){
+    private static void createEmployee(String name, String surname, int employeeChoice, int compensationChoice, int departmentChoice, int EntityChoice, boolean loadFiles){
         Employee newEmployee = null;
-        Manager newManager = null;
         Department newDepartment = null;
-        String managerOption = ManagerOptions.fromCode(managerChoice).getDescription();
+        Compensation newCompensation = null;
+        Entity newEntity = null;
+        String employeeOption = EmployeeOptions.fromCode(employeeChoice).getDescription();
+        String compensationOption = CompensationOptions.fromCode(compensationChoice).getDescription();//MODIFY
         String departmentOption = DepartmentOptions.fromCode(departmentChoice).getDescription();
-        switch(managerChoice){
-                case 1 -> newManager = new TeamLeader(managerOption);
-                case 2 -> newManager = new AssistantManager(managerOption);
-                case 3 -> newManager = new SeniorManager(managerOption);
-                case 4 -> newManager = new HeadManager(managerOption);
+        String entityOption = EntityOptions.fromCode(EntityChoice).getDescription();//MODIFY
+        switch(compensationChoice){
+                case 1 -> newCompensation = new FullTimeEmployee(compensationOption);
+                case 2 -> newCompensation = new PartTimeEmployee(compensationOption);
+                case 3 -> newCompensation = new ContractorEmployee(compensationOption);
         }
         switch(departmentChoice){
                 case 1 -> newDepartment = new CustomerService(departmentOption);
                 case 2 ->  newDepartment = new TechnicalSupport(departmentOption);
                 case 3 ->  newDepartment = new HumanResources(departmentOption);
         }
-        switch(choiceEmployee){
-                case 1 -> newEmployee = new Developer(name, surname, newManager, newDepartment);
-                case 2 ->  newEmployee = new Tester(name, surname, newManager, newDepartment);
-                case 3 ->  newEmployee = new Designer(name, surname, newManager, newDepartment);
+        switch(EntityChoice){
+                case 1 -> newEntity = new EntityIreland(entityOption);
+                case 2 -> newEntity = new EntitySpain(entityOption);
+                case 3 -> newEntity = new EntityLondon(entityOption);
+                case 4 -> newEntity = new EntityUSA(entityOption);
+        }
+        switch(employeeChoice){
+                case 1 -> newEmployee = new Developer(ID, name, surname, employeeOption, newCompensation, newDepartment, newEntity);
+                case 2 ->  newEmployee = new Tester(ID, name, surname, employeeOption, newCompensation, newDepartment, newEntity);
+                case 3 ->  newEmployee = new Designer(ID, name, surname, employeeOption, newCompensation, newDepartment, newEntity);
         }
         employee.add(newEmployee);
         if (!loadFiles) {//To avoid printing the list when the system load from the .txt file
-            System.out.println("\n"+name + " " + surname + " has been added as " + newEmployee.getClass().getSimpleName()+ " under the management of " + newManager + " to " + newDepartment + " successfully!\n");
+            System.out.println("\n"+ID+": "+name + " " + surname + " has been added as " + newEmployee.getPosition()+ " with a "+ newCompensation.getTypeOfEmployee() + " contract to " + newDepartment + " successfully!\n");
             writeToFile(newEmployee, fileName);
-        }        
+        }
     }
     
-    private static void generateEmployee(int numberEmployees){
+    private static void generateEmployee(){
         System.out.println("\n-- Generate Employees --");
+        int numberEmployees = input.insertNumber("How many employees want to generate: ");
         String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie","Mia","Amy","Paul"};
         String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw", "Silva"};
         for (int i = 0; i < numberEmployees; i++) {
             Random randomEmployee = new Random();
             String name = names[randomEmployee.nextInt(names.length)];
             String surname = surnames[randomEmployee.nextInt(surnames.length)];
-            EmployeeOptions employeeOption = EmployeeOptions.values()[randomEmployee.nextInt(EmployeeOptions.values().length)];//We get a random value from the enum of employeeOptions
-            ManagerOptions managerOption = ManagerOptions.values()[randomEmployee.nextInt(ManagerOptions.values().length)];//We get a random value from the enum of ManagerOptions
-            DepartmentOptions departmentOption = DepartmentOptions.values()[randomEmployee.nextInt(DepartmentOptions.values().length)];//We get a random value from the enum of DepartmentOptions
-            int employeeChoice = employeeOption.getCode();
-            int managerChoice = managerOption.getCode();
-            int departmentChoice = departmentOption.getCode();
-            createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, false);
+            EntityOptions entityOption = EntityOptions.values()[randomEmployee.nextInt(EntityOptions.values().length)];//We get a random value from the enum of employeeOptions
+            int employeeChoice = EmployeeOptions.values()[randomEmployee.nextInt(EmployeeOptions.values().length)].getCode();//We get a random value from the enum of employeeOptions
+            int compensationChoice = CompensationOptions.values()[randomEmployee.nextInt(CompensationOptions.values().length)].getCode();//We get a random value from the enum of CompensationOptions
+            int departmentChoice = DepartmentOptions.values()[randomEmployee.nextInt(DepartmentOptions.values().length)].getCode();//We get a random value from the enum of DepartmentOptions
+            int entityChoice = EntityOptions.values()[randomEmployee.nextInt(EntityOptions.values().length)].getCode();//We get a random value from the enum of EntityOptions
+            ID++;
+            createEmployee(name, surname, employeeChoice, compensationChoice, departmentChoice, entityChoice, false);
         }
-        
+        System.out.println(numberEmployees + " employee(s) were generated\n");
     }
     
     private static void writeToFile(Employee employee, String fileName){
         try(FileWriter writer = new FileWriter(fileName, true)){//true to append
             String name = employee.getName();
             String surname = employee.getSurname();
-            String manager = employee.getManagement().toString();
-            String position = employee.getClass().getSimpleName();//we get the simple name from the child class
+            String position = employee.getPosition();//we get the simple name from the child class
+            //String manager = employee.getManagement().toString();
+            String typeOfEmployee = employee.getCompensation().getTypeOfEmployee();
             String department = employee.getDepartment().toString();
-            String line = String.format("%s,%s,%s,%s,%s%n", name, surname, position, manager, department);
+            String entity = employee.getEntity().getName();
+            String line = String.format("%s,%s,%s,%s,%s,%s,%s%n", ID, name, surname, position, typeOfEmployee, department, entity);
             writer.write(line);            
         }catch(IOException e){
             System.out.println("Error writing into the file "+fileName+" "+e.getMessage());
@@ -163,23 +160,26 @@ public class Tech_Company {
             while(fileSC.hasNextLine()){
                 String line = fileSC.nextLine(); // Read the next line
                 String[] fields = line.split(","); // Split line into different parts
-                if (fields.length == 5) {
-                    String name = fields[0].trim();
-                    String surname = fields[1].trim();
-                    String position = fields[2].trim().toUpperCase().replace(" ", "_");//To normalize the format to EmployeeOptions
-                    String managementStr = fields[3].trim().toUpperCase().replace(" ", "_");//To normalize the format to ManagmentOptions
-                    String departmentStr = fields[4].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
+                if (fields.length == 7) {
+                    ID = Integer.parseInt(fields[0].trim());
+                    String name = fields[1].trim();
+                    String surname = fields[2].trim();
+                    String position = fields[3].trim().toUpperCase().replace(" ", "_");//To normalize the format to EmployeeOptions
+                    String compensationStr = fields[4].trim().toUpperCase().replace(" ", "_");//To normalize the format to CompensationOptions
+                    String departmentStr = fields[5].trim().toUpperCase().replace(" ", "_");//Tp normalize the format to DepartmentOptions
+                    String entityStr = fields[6].trim().toUpperCase().replace(" ", "_");//To normalize the format to EntityOptions
                     try{
                         int employeeChoice = EmployeeOptions.fromDescription(position).getCode();
-                        int managerChoice = ManagerOptions.valueOf(managementStr).getCode();
+                        int compensationChoice = CompensationOptions.valueOf(compensationStr).getCode();
                         int departmentChoice = DepartmentOptions.valueOf(departmentStr).getCode();
-                        createEmployee(name, surname, employeeChoice, managerChoice, departmentChoice, true);
+                        int entityChoice = EntityOptions.valueOf(entityStr).getCode();
+                        createEmployee(name, surname, employeeChoice, compensationChoice, departmentChoice, entityChoice, true);
                     }catch(IllegalArgumentException  e){
                         System.out.println("Invalid values: "+line);
                     }
                 }
             }
-            System.out.println("Employees were loaded from file "+fileName+" were loaded successfully\n");
+            System.out.println("Employees were loaded from file "+fileName+" were loaded successfully");
         }catch(Exception e){
             System.out.println("Error reading the file: "+e.getMessage());
         }
@@ -197,9 +197,7 @@ public class Tech_Company {
         for (int i = 0; i < maxDisplay; i++) {
             System.out.println(employee.get(i));
         }
-        System.out.println("\n");
     }
-    
     
     public static void mergeSort(List<Employee> employeeList, int left, int right){
         if (left<right) {//Only if there is at least one element in the list
@@ -261,6 +259,7 @@ public class Tech_Company {
     
     private static void binarySearch(List<Employee> list, String name, String surname, int left, int right){
         if (left > right) {
+            System.out.println("\n-- Result of the search--");
             System.out.println("Employee not found.\n");
             return;
         }
@@ -270,10 +269,13 @@ public class Tech_Company {
         if ((employeeName.compareToIgnoreCase(name))==0) {//If the name matches
             if (employeeSurname.compareToIgnoreCase(surname.trim())==0) {//If the lastname matches
                 //return list.get(middle);//The employee was found
-                System.out.println("Result found: \n");
-                System.out.println("Name: "+list.get(middle).getName()+" "+list.get(middle).getSurname()+"\n");
-                System.out.println("Manager Type: "+list.get(middle).getManagement()+"\n");
-                System.out.println("Department: "+list.get(middle).getDepartment()+"\n");
+                System.out.println("\n-- Result of the search--");
+                System.out.println("Name: "+list.get(middle).getName()+" "+list.get(middle).getSurname());
+                System.out.println("Position: "+list.get(middle).getPosition());
+                System.out.println("Contract type: "+list.get(middle).getCompensation().getTypeOfEmployee());
+                System.out.println("Salary: "+list.get(middle).getCompensation().getSalary());
+                System.out.println("Department: "+list.get(middle).getDepartment().getName());
+                System.out.println("Located in: "+list.get(middle).getEntity().getName()+"\n");
             }
         }else{
             if ((employeeName.compareToIgnoreCase(name))> 0) {

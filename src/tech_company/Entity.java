@@ -8,19 +8,17 @@ package tech_company;
  *
  * @author Luis
  */
-public class Manager {
-    private String position;
+public abstract class Entity {
+    private String name;
     
-    public Manager(String position){
-        this.position = position;
+    public Entity(String name){
+        this.name = name;
     }
-    
-    public String getPosition(){
-        return position;
+    public String getName(){
+        return name;
     }
-    
     @Override
     public String toString() {
-        return position;
+        return name;
     }
 }

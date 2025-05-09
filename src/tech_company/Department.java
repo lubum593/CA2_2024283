@@ -8,7 +8,7 @@ package tech_company;
  *
  * @author Luis
  */
-public class Department {
+public abstract class Department {
     private String name;
     
     public Department(String name){
