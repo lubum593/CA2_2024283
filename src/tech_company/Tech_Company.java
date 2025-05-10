@@ -82,7 +82,7 @@ public class Tech_Company {
     //Method to generate a random employee
     private static void generateEmployee(){
         System.out.println("\n-- Generate Employees --");
-        int numberEmployees = input.insertNumber("How many employees want to generate: ");
+        int numberEmployees = Math.min(50, input.insertNumber("How many employees want to generate: "));//Math.min implemented to avoid the system to colapse
         String[] names = {"Anna", "Jake", "Lily", "Alex", "Sam", "Jamie", "Taylor", "Chris", "Jordan", "Mark", "Sophie","Mia","Amy","Paul"};
         String[] surnames = {"Grey", "Stone", "Dane", "Smith", "Brown", "Lee", "Garcia", "Davis", "Miller", "Hawk", "Shaw", "Silva"};
         for (int i = 0; i < numberEmployees; i++) {
