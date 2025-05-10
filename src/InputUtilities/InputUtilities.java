@@ -32,8 +32,8 @@ public class InputUtilities {
         String number = sc.nextLine();
         while(!number.matches("[0-9]+")){
             if (!number.matches("")) {
-                System.out.println("You must enter numbers only");
-                System.out.println(prompt);
+                System.out.println("You must enter valid numbers only");
+                System.out.print(prompt);
             }
             number = sc.nextLine();
         }

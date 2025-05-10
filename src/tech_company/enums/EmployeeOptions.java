@@ -43,19 +43,19 @@ public enum EmployeeOptions {
         }
         return null;
     }
-    
+    //Method to display and choose an option
     public static EmployeeOptions select(){
         EmployeeOptions selectedEmployee;
         InputUtilities input = new InputUtilities();
-        System.out.println("-- Select a Position option --");
+        System.out.println("\n-- Select a Position option --");
         for (EmployeeOptions options : EmployeeOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedEmployee = EmployeeOptions.fromCode(option);
             if (selectedEmployee != null) {
-                return selectedEmployee;
+                return selectedEmployee;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

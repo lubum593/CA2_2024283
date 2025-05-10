@@ -36,19 +36,19 @@ public enum ManagerOptions {
         }
         return null;
     }
-    
+    //Method to display and choose an option
     public static ManagerOptions select(){
         ManagerOptions selectedManagement;
         InputUtilities input = new InputUtilities();
         System.out.println("\n-- Select Manager Type --");
         for (ManagerOptions options : ManagerOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedManagement = ManagerOptions.fromCode(option);
             if (selectedManagement != null) {
-                return selectedManagement;
+                return selectedManagement;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

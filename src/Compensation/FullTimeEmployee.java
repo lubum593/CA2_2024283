@@ -15,7 +15,6 @@ public class FullTimeEmployee extends Compensation{
     
     public FullTimeEmployee(String typeOfEmployee) {
         super(typeOfEmployee);
-        this.salary = 7000;
-        //this.typeOfEmployee = CompensationOptions.fromCode(1).getDescription();
+        this.salary = 7000;//set a salary for Full Time
     }
 }

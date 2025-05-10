@@ -36,18 +36,19 @@ public enum MenuOptions {
         }
         return null;
     }
+    //Method to display and choose an option
     public static MenuOptions select(){
        MenuOptions selectedMenu;
        InputUtilities input = new InputUtilities();
         System.out.println("\n-- Do You wish to SORT, SEARCH or ADD Employees --");
         for (MenuOptions options : MenuOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedMenu = MenuOptions.fromCode(option);
             if (selectedMenu != null) {
-                return selectedMenu;
+                return selectedMenu;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

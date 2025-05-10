@@ -44,18 +44,19 @@ public enum CompensationOptions {
         }
         return null;
     }
+    //Method to display and choose an option
     public static CompensationOptions select(){
         CompensationOptions selectedCompensation;
         InputUtilities input = new InputUtilities();
-        System.out.println("-- Select a Position option --");
+        System.out.println("\n-- Select if the type of contract option --");
         for (CompensationOptions options : CompensationOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedCompensation = CompensationOptions.fromCode(option);
             if (selectedCompensation != null) {
-                return selectedCompensation;
+                return selectedCompensation;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

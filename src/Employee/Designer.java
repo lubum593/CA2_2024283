@@ -17,5 +17,4 @@ public class Designer extends Employee{
     public Designer(int ID, String name, String surname, String position, Compensation compensation, Department department, Entity entity) {
         super(ID, name, surname, position, compensation, department, entity);
     }
-    
 }

@@ -15,7 +15,6 @@ public class PartTimeEmployee extends Compensation{
     
     public PartTimeEmployee(String typeOfEmployee) {
         super(typeOfEmployee);
-        this.salary = 3000;
-        //this.typeOfEmployee = CompensationOptions.fromCode(2).getDescription();
+        this.salary = 3000;//Set a salary for Part Time
     }
 }

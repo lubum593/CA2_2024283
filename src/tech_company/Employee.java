@@ -48,9 +48,9 @@ public abstract class Employee {
     public Entity getEntity(){
         return entity;
     }
+    
     @Override
     public String toString() {
         return name + " " + surname + " - " + position + " - " + compensation + " - " + department + " - " + entity;
     }
-    
 }

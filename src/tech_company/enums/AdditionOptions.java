@@ -11,7 +11,7 @@ import InputUtilities.*;
 public enum AdditionOptions {
     ADD_EMPLOYEE(1, "Add Employee"),
     GENERATE_EMPLOYEE(2, "Generate Employee"),
-    PRINT_EMPLOYEES(3, "Print");
+    PRINT_EMPLOYEES(3, "Print Complete List");
     private final int code;
     private final String description;
 
@@ -26,18 +26,19 @@ public enum AdditionOptions {
     public String getDescription() {
         return description;
     }
+    //Method to display and choose an option
     public static AdditionOptions select(){
         AdditionOptions selectedAddition;
         InputUtilities input = new InputUtilities();
         System.out.println("\n-- Select an option --");
         for (AdditionOptions options : AdditionOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedAddition = AdditionOptions.fromCode(option);
             if (selectedAddition != null) {
-                return selectedAddition;
+                return selectedAddition;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

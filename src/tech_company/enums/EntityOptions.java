@@ -44,18 +44,19 @@ public enum EntityOptions {
         }
         return null;
     }
+    //Method to display and choose an option
     public static EntityOptions select(){
         EntityOptions selectedEntities;
         InputUtilities input = new InputUtilities();
-        System.out.println("-- Select a Position option --");
+        System.out.println("\n-- Select an Entity option --");
         for (EntityOptions options : EntityOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedEntities = EntityOptions.fromCode(option);
             if (selectedEntities != null) {
-                return selectedEntities;
+                return selectedEntities;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }

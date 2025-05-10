@@ -15,7 +15,6 @@ public class ContractorEmployee extends Compensation{
     
     public ContractorEmployee(String typeOfEmployee) {
         super(typeOfEmployee);
-        this.salary = 5000;
-        //this.typeOfEmployee = CompensationOptions.fromCode(3).getDescription();
+        this.salary = 5000;//set a salary for Contractors
     }    
 }

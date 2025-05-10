@@ -35,18 +35,19 @@ public enum DepartmentOptions {
         }
         return null;
     }
+    //Method to display and choose an option
     public static DepartmentOptions select(){
         DepartmentOptions selectedDepartment;
         InputUtilities input = new InputUtilities();
         System.out.println("\n-- Select a Department option --");
         for (DepartmentOptions options : DepartmentOptions.values()) {
-                System.out.println(options);
+                System.out.println(options);//it will print each option of the enum
         }
         while(true){
             int option = input.insertNumber("Enter your choice: ");
             selectedDepartment = DepartmentOptions.fromCode(option);
             if (selectedDepartment != null) {
-                return selectedDepartment;
+                return selectedDepartment;//it will return the option selected
             }
             System.out.println("Invalid choice, try again.");
         }
