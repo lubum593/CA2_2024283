@@ -30,13 +30,20 @@ public class InputUtilities {
     public int insertNumber(String prompt){
         System.out.print(prompt);
         String number = sc.nextLine();
-        while(!number.matches("[0-9]+")){
-            if (!number.matches("")) {
+        while(true){
+            if (!number.matches("[0-9]+")) {
+                if (!number.matches("")) {
+                    System.out.println("You must enter valid numbers only");
+                    System.out.print(prompt);
+                }
+            }else if(Integer.parseInt(number)>0){
+                return (Integer.parseInt(number));
+            }else{
                 System.out.println("You must enter valid numbers only");
                 System.out.print(prompt);
             }
             number = sc.nextLine();
         }
-       return (Integer.parseInt(number));
+       
     }
 }
