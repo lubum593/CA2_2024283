@@ -24,7 +24,7 @@ import java.util.Scanner;
  */
 public class Tech_Company {
     static InputUtilities input = new InputUtilities();
-    static int ID = 0;
+    static int ID = 0;//employee ID
     static List<Employee> employee = new ArrayList<>();
     private static String fileName;
     
@@ -132,7 +132,7 @@ public class Tech_Company {
         }
         employee.add(newEmployee);//adding into the list
         if (!loadFiles) {//To avoid printing the list AGAIN when the system load from the .txt file
-            System.out.println("\n"+ID+": "+name + " " + surname + " has been added as " + newEmployee.getPosition()+ " with a "+ newCompensation.getTypeOfEmployee() + " contract to " + newDepartment + " successfully!\n");
+            System.out.println("\n"+ID+": "+name + " " + surname + " has been added as " + newEmployee.getPosition()+ " with a "+ newCompensation.getTypeOfEmployee() + " contract to " + newDepartment + " located in "+ newEntity +" successfully!\n");
             writeToFile(newEmployee, fileName);//Save the new employee into the file .txt
         }
     }
@@ -288,7 +288,7 @@ public class Tech_Company {
                 System.out.println("Located in: "+list.get(middle).getEntity().getName()+"\n");
             }
         }else{//it will call recursively BinarySearch
-            //If the middle name comes after the search nam, the search will go to the Left
+            //If the middle name comes after the search name, the search will go to the Left
             if ((employeeName.compareToIgnoreCase(name))> 0) {
                 binarySearch(list, name, surname, left, middle-1);
             }else{//If the middle name comes before the search nam, the search will go to the Right

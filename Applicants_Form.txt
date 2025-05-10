@@ -134,3 +134,9 @@ ID,First name,surname,position,Contract,Department,Entity
 133,Jake,Shaw,Developer,Part Time,Human Resources,Spain
 134,Amy,Shaw,Developer,Full Time,Customer Service,England
 135,Jake,Smith,Developer,Contractor,Human Resources,Ireland
+136,Luis,Medina,Developer,Full Time,Technical Support,Ireland
+137,Taylor,Brown,Developer,Part Time,Customer Service,Ireland
+138,Paul,Hawk,Designer,Part Time,Technical Support,United States
+139,Mark,Grey,Developer,Contractor,Customer Service,Ireland
+140,Paul,Davis,Developer,Part Time,Human Resources,United States
+141,Mia,Dane,Developer,Full Time,Technical Support,Ireland
